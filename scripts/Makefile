@@ -24,9 +24,6 @@ sta:
 	$(SED) -E "s/(set current_design_name) ([a-zA-Z]+).*/\1 $(TOP_MODULE)/" -i ../scripts/sta.tcl 
 	openroad ../scripts/sta.tcl | tee $(NETLIST).sta
 
-%.svg: pkg.json
-	netlistsvg pgk.json  -o pgk.svg
-
 clean:
 	rm *.svg *.json
 
