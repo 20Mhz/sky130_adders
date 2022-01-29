@@ -8,7 +8,7 @@ make -f ../scripts/Makefile ripple TOP_MODULE=carryRippleN_h; # Build Netlist
 make -f ../scripts/Makefile sta NETLIST=ripple.vg TOP_MODULE=carryRippleN_h
 ```
 
-STA - Slow corner
+STA - Slow corner (ss_100C_1v60)
 
 ```
 work/carrySkip.vg.sta:                                 8.2787   data arrival time
