@@ -1,4 +1,3 @@
-
 # Setup Tech
 set LIB_DIR /Users/ronaldv/Projects/repositories/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hd/lib/
 # slow
@@ -12,8 +11,9 @@ read_liberty -corner fast ${LIB_DIR}/${FAST_LIB}
 read_lef /Users/ronaldv/Projects/repositories/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hd/lef/sky130_fd_sc_hd.lef
 
 # Read the design
-read_verilog carrySkip.vg
-set current_design_name carrySkip
+set TOP_MODULE carryLookAhead
+read_verilog results/carryLookAhead.vg
+set current_design_name ${TOP_MODULE}
 link 
 
 # Consrain
@@ -31,5 +31,5 @@ if {$current_design_name=="carrySkip"} {
 	set_case_analysis 0 ${first_mux_select}
 }
 # report
-report_checks -digits 4 -fields {capacitance transition}
+report_checks -format full -digits 4 -fields {capacitance transition}
 exit
