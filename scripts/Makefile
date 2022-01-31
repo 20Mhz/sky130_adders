@@ -20,7 +20,7 @@ all: %.svg
 				-p "hierarchy -top $(TOP_MODULE)"  \
 				-p "proc"  \
 				-p "write_json results/$@.json" \
-				-p "write_verilog results/$@.vg"
+				-p "write_verilog -noattr results/$@.vg"
 				#-p "CONSTMAP; opt_muxtree; opt_const -mux_undef -mux_bool -fine;" \
 				-p "opt_muxtree; " \
 				-p "

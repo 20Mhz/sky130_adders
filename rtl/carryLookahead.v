@@ -19,7 +19,7 @@ module grayCell (
 	output wire  Gout_i2j
 	);
 	//assign Gout_i2j = Gin_i2k + (Pin_i2k*Gin_kd2j);
-	sky130_fd_sc_hd__a21o_1 uA21O(
+	sky130_fd_sc_hd__a21o_1 uGray(
 		.A1(Pin_i2k),
 		.A2(Gin_kd2j),
 		.B1(Gin_i2k),
