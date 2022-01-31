@@ -27,6 +27,7 @@ module grayCell (
 	);
 endmodule
 
+// This computes P_4to1 and G4to:1
 module pg_box #(parameter N=4) (
     input wire Cin,
     input wire [N-1:0] A,
@@ -36,8 +37,7 @@ module pg_box #(parameter N=4) (
 		output wire [N-1:0] G_n,
     output wire P_i2j 
     );
-	//assign G_n2j[0]=Cin; // G0:0=Cin
-	assign G_n2j[0]=G_n[0]; // G0:0=Cin
+	assign G_n2j[0]=G_n[0]; // G1:1
 	sky130_fd_sc_hd__and4_1 u_AND4(
 		.A(P_n[0]),
 		.B(P_n[1]),
@@ -82,7 +82,7 @@ module cla_unit #(parameter N=4) (
     wire [N-1:0] G_n2j;
     wire [N-1:0] P_n;
     wire [N-1:0] G_n;
-	//Carry skip magic 
+	// Pass new Carry of P_4to1 is 0 
 	sky130_fd_sc_hd__a21o_1 uA21O(
 		.A1(P_i2j),
 		.A2(Cin),
@@ -99,14 +99,8 @@ module cla_unit #(parameter N=4) (
     	.G_n2j(G_n2j),
    		.P_i2j(P_i2j) 
     );
-	//// Compute Cout
-	//grayCell g0(
-	//	.Gin_i2k(G_n[N-1]), // Gi:i
-	//	.Pin_i2k(P_n[N-1]), // Pi:i
-	//	.Gin_kd2j(G_n2j[N-1]),
-	//	.Gout_i2j(G_3to0)
-	//);
 	// Compute Sum
+	// PG Box now computes 4:1, but Sum uses 3:0
 	wire [N-1:0] G3t0 = {G_n2j[N-2:0],Cin};
 	wire [N-1:0] Pnm1 = {P_n[N-2:0],1'b0};
 	genvar i;
@@ -134,8 +128,8 @@ module carryLookAhead #(parameter N=16) (
 	// Compute Sum
 	genvar i;
 	generate 
-	for (i=1;i<=N/4; i=i+1) begin: csa 
-		cla_unit #(.N(4)) u_CSA(
+	for (i=1;i<=N/4; i=i+1) begin: cla 
+		cla_unit #(.N(4)) u_CLA(
 			.Cin(carries[i-1]),
 			.A(A[4*i-1:4*i-4]),
 			.B(B[4*i-1:4*i-4]),
