@@ -9,7 +9,7 @@ for adder in ${ADDERS[@]}; do
 done
 cd -
 # Collect Results
-echo "Design,Arrival" > results.rpt
+echo "Design,Arrival,Area" > results.rpt
 for adder in ${ADDERS[@]}; do 
-	echo "$adder,$(grep arrival work/reports/$adder.sta -m1 | awk '{print $1}')" >> results.rpt	
+	echo "$adder,$(grep arrival work/reports/$adder.sta -m1 | awk '{print $1}'),$(grep "^Design Area" work/reports/$adder.sta -m1 | awk '{print $3}')" >> results.rpt	
 done
