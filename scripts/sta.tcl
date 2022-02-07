@@ -1,3 +1,25 @@
+# Procs to get Area from LEF
+proc create_lib_area_dict {} {
+	set lib_area_dict [dict create]	
+	set db [ord::get_db]
+	foreach lib [$db getLibs] {
+	    set dbu [expr 1.0 * [$lib getDbUnitsPerMicron]]
+	    foreach master [$lib getMasters] {
+	        dict lappend lib_area_dict [$master getName] [expr [$master getWidth] / $dbu * [$master getHeight] / $dbu]
+	    }
+	}
+	return $lib_area_dict
+}
+
+proc get_cells_area { cells lib_area_dict } {
+	set area 0
+	foreach cel $cells {
+		set lib_cell [get_name [get_lib_cells -of_objects $cel]]
+		set area [expr $area + [dict get $lib_area_dict $lib_cell]]
+	}
+	return $area
+}
+
 # Setup Tech
 set LIB_DIR /Users/ronaldv/Projects/repositories/open_pdks/sky130/sky130A/libs.ref/sky130_fd_sc_hd/lib/
 # slow
@@ -32,4 +54,6 @@ if {$current_design_name=="carrySkip"} {
 }
 # report
 report_checks -format full -digits 4 -fields {capacitance transition}
+puts "Design Area: [get_cells_area [get_cells -hier] [create_lib_area_dict]]"
+
 exit
