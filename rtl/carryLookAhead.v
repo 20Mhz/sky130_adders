@@ -58,12 +58,12 @@ module pg_box #(parameter N=4) (
 			.B(B[i]),
 			.X(P_n[i])
 		);
-		if(i!=N-1) begin:gray
+		if(i!=0) begin:gray
 		grayCell g0(
 			.Gin_i2k(G_n[i]), // Gi:i
 			.Pin_i2k(P_n[i]), // Pi:i
-			.Gin_kd2j(G_n2j[i]),
-			.Gout_i2j(G_n2j[i+1])
+			.Gin_kd2j(G_n2j[i-1]),
+			.Gout_i2j(G_n2j[i])
 		);
 		end
 	end
@@ -101,14 +101,30 @@ module cla_unit #(parameter N=4) (
     );
 	// Compute Sum
 	// PG Box now computes 4:1, but Sum uses 3:0
-	wire [N-1:0] G3t0 = {G_n2j[N-2:0],Cin};
-	wire [N-1:0] Pnm1 = {P_n[N-2:0],1'b0};
+	wire [N-1:0] G3to0;
+  assign G3to0[0]	= Cin;
+	wire [N-1:0] P3to1;
+	assign P3to1[0] = P_n[0];
+
 	genvar i;
 	generate 
 	for (i=0;i<N; i=i+1) begin: sum 
+		if (i!=0) begin
+			sky130_fd_sc_hd__and2_0 uP_3to1(
+			.A(P_n[i]),
+			.B(P3to1[i-1]),
+			.X(P3to1[i])
+			);
+			sky130_fd_sc_hd__a21o_1 uG_3to0(
+			.A1(P3to1[i-1]),
+			.A2(Cin),
+			.B1(G_n2j[i-1]),
+			.X(G3to0[i])
+			);
+		end
 		sky130_fd_sc_hd__xor2_1 uS_n(
-			.A(P_nm1[i]),
-			.B(G3t0[i]),
+			.A(P_n[i]),
+			.B(G3to0[i]),
 			.X(Sout[i])
 		);
 	end
